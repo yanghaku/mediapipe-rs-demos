@@ -1,0 +1,15 @@
+[package]
+name = "image-classification"
+edition = "2021"
+version = "0.1.0"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+anyhow = "1"
+image = "0"
+
+[dependencies.mediapipe-rs]
+git = "https://github.com/yanghaku/mediapipe-rs.git"
+branch = "main"
+default-features = false
+features = ["vision"]

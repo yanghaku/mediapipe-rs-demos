@@ -1,0 +1,13 @@
+[package]
+name = "audio-classification-ffmpeg"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+
+[dependencies.mediapipe-rs]
+git = "https://github.com/yanghaku/mediapipe-rs.git"
+branch = "main"
+default-features = false
+features = ["audio", "ffmpeg"]

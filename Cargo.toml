@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "crates/audio/audio-classification",
+#    "crates/audio/audio-classification-ffmpeg",
+    "crates/text/text-classification",
+    "crates/vision/image-classification",
+    "crates/vision/image-embedding",
+    "crates/vision/gesture-recognition",
+]
