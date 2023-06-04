@@ -5,5 +5,9 @@ members = [
     "crates/text/text-classification",
     "crates/vision/image-classification",
     "crates/vision/image-embedding",
+    "crates/vision/image-segmentation",
     "crates/vision/gesture-recognition",
+    "crates/vision/object-detection",
+    "crates/vision/face-detection",
+    "crates/vision/hand-landmark-detection",
 ]
