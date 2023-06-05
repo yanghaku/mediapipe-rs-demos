@@ -1,6 +1,42 @@
 # [MediaPipe-rs] Demos
 
-[Build WasmEdge with WASI-NN TfLite backend]
+## Build from source
+
+For the normal applications, just use ```cargo``` to build:
+
+```shell
+cargo build --release
+```
+
+For the ffmpeg applications (`audio-classification-ffmpeg` and `image-classification-ffmpeg`),
+need download ffmpeg wasm32-wasi library and wasi-sysroot.
+
+1. Download the FFMpeg dependencies
+   ```shell
+   ./scripts/download-ffmpeg-deps.sh
+   ```
+2. Set environment variables for ```cargo```
+   ```shell
+   source ./scripts/ffmpeg-cargo-env.sh
+   ```
+3. Build using ```cargo```
+   ```shell
+   pushd crates/audio/audio-classification-ffmpeg
+   cargo build --release
+   popd
+   ```
+
+   ```shell
+   pushd crates/vision/image-classification-ffmpeg
+   cargo build --release
+   popd
+   ```
+
+## Run the demos
+
+Use the [WasmEdge] with TfLite backend.
+
+references: [Build WasmEdge with WASI-NN TfLite backend]
 
 
 # License
