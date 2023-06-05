@@ -1,7 +1,6 @@
 [workspace]
 members = [
     "crates/audio/audio-classification",
-#    "crates/audio/audio-classification-ffmpeg",
     "crates/text/text-classification",
     "crates/vision/image-classification",
     "crates/vision/image-embedding",
@@ -10,4 +9,8 @@ members = [
     "crates/vision/object-detection",
     "crates/vision/face-detection",
     "crates/vision/hand-landmark-detection",
+]
+exclude = [
+    "crates/audio/audio-classification-ffmpeg",
+    "crates/vision/image-classification-ffmpeg",
 ]
