@@ -3,7 +3,7 @@ use mediapipe_rs::ffmpeg_next;
 use mediapipe_rs::preprocess::vision::FFMpegVideoData;
 use mediapipe_rs::tasks::vision::ImageClassifierBuilder;
 
-/// MediaPipe-rs demo: image classification task.
+/// MediaPipe-rs demo: image classification task use `FFMpeg` to parse video input.
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Args {

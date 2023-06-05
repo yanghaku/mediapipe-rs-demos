@@ -1,5 +1,5 @@
 [package]
-name = "video-classification-ffmpeg"
+name = "image-classification-ffmpeg"
 version = "0.1.0"
 edition = "2021"
 
