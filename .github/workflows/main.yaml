@@ -30,8 +30,8 @@ jobs:
       - name: Install Rust wasm32-wasi
         run: rustup target add wasm32-wasi
 
-      #      - name: Build normal applications
-      #        run: cargo build --release
+      - name: Build normal applications
+        run: cargo build --release
 
       - name: Download FFMpeg dependencies
         run: ./scripts/download-ffmpeg-deps.sh
@@ -59,12 +59,11 @@ jobs:
           cp build/_deps/wasmedgetensorflowdepslite-src/libtensorflowlite_c.so ${WASMEDGE_PATH}/lib/;"
 
       - name: Run application image-classification.wasm
-        env:
-          PATH: ${WASMEDGE_PATH}/bin:${PATH}
-          WASMEDGE_PLUGIN_PATH: ${WASMEDGE_PATH}/lib/wasmedge
-          LD_LIBRARY_PATH: ${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}
         run: |
           bash -c "\
+          export PATH=${WASMEDGE_PATH}/bin:${PATH}; \
+          export WASMEDGE_PLUGIN_PATH=${WASMEDGE_PATH}/lib/wasmedge; \
+          export LD_LIBRARY_PATH=${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}; \
           curl -sLO https://storage.googleapis.com/mediapipe-tasks/image_classifier/efficientnet_lite0_fp32.tflite;\
           wasmedge --dir .:. ./target/wasm32-wasi/release/image-classification.wasm --help;\
           wasmedge --dir .:. ./target/wasm32-wasi/release/image-classification.wasm \
@@ -73,12 +72,11 @@ jobs:
           -m ./efficientnet_lite0_fp32.tflite -i ./data/data/img/banana.jpg;"
 
       - name: Run application text-classification.wasm
-        env:
-          PATH: ${WASMEDGE_PATH}/bin:${PATH}
-          WASMEDGE_PLUGIN_PATH: ${WASMEDGE_PATH}/lib/wasmedge
-          LD_LIBRARY_PATH: ${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}
         run: |
           bash -c "\
+          export PATH=${WASMEDGE_PATH}/bin:${PATH}; \
+          export WASMEDGE_PLUGIN_PATH=${WASMEDGE_PATH}/lib/wasmedge; \
+          export LD_LIBRARY_PATH=${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}; \
           curl -sLO https://storage.googleapis.com/mediapipe-tasks/text_classifier/bert_text_classifier.tflite;\
           echo "I love coding so much!" | wasmedge --dir .:. ./target/wasm32-wasi/release/text-classification.wasm \
           -m ./bert_text_classifier.tflite;\
@@ -86,12 +84,11 @@ jobs:
           -m ./bert_text_classifier.tflite;"
 
       - name: Run application gesture-recognition.wasm
-        env:
-          PATH: ${WASMEDGE_PATH}/bin:${PATH}
-          WASMEDGE_PLUGIN_PATH: ${WASMEDGE_PATH}/lib/wasmedge
-          LD_LIBRARY_PATH: ${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}
         run: |
           bash -c "\
+          export PATH=${WASMEDGE_PATH}/bin:${PATH}; \
+          export WASMEDGE_PLUGIN_PATH=${WASMEDGE_PATH}/lib/wasmedge; \
+          export LD_LIBRARY_PATH=${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}; \
           curl -sLO https://storage.googleapis.com/mediapipe-tasks/gesture_recognizer/gesture_recognizer.task;\
           wasmedge --dir .:. ./target/wasm32-wasi/release/gesture-recognition.wasm \
           -m ./gesture_recognizer.task -i data/img/gesture_recognition_google_samples/pointing_up.jpg;\
@@ -101,23 +98,21 @@ jobs:
           -m ./gesture_recognizer.task -i data/img/gesture_recognition_google_samples/victory.jpg;"
 
       - name: Run application audio-classification-ffmpeg.wasm
-        env:
-          PATH: ${WASMEDGE_PATH}/bin:${PATH}
-          WASMEDGE_PLUGIN_PATH: ${WASMEDGE_PATH}/lib/wasmedge
-          LD_LIBRARY_PATH: ${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}
         run: |
           bash -c "\
+          export PATH=${WASMEDGE_PATH}/bin:${PATH}; \
+          export WASMEDGE_PLUGIN_PATH=${WASMEDGE_PATH}/lib/wasmedge; \
+          export LD_LIBRARY_PATH=${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}; \
           curl -sLO https://storage.googleapis.com/mediapipe-tasks/audio_classifier/yamnet_audio_classifier_with_metadata.tflite;\
           wasmedge --dir .:. -m ./crates/audio/audio-classification-ffmpeg/target/wasm32-wasi/release/audio-classification-ffmpeg.wasm \
           -m ./yamnet_audio_classifier_with_metadata.tflite -i data/audio/speech_16000_hz_mono.wav;"
 
       - name: Run application object-detection.wasm
-        env:
-          PATH: ${WASMEDGE_PATH}/bin:${PATH}
-          WASMEDGE_PLUGIN_PATH: ${WASMEDGE_PATH}/lib/wasmedge
-          LD_LIBRARY_PATH: ${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}
         run: |
           bash -c "\
+          export PATH=${WASMEDGE_PATH}/bin:${PATH}; \
+          export WASMEDGE_PLUGIN_PATH=${WASMEDGE_PATH}/lib/wasmedge; \
+          export LD_LIBRARY_PATH=${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}; \
           curl -sLO https://storage.googleapis.com/mediapipe-tasks/object_detector/efficientdet_lite0_uint8.tflite;\
           wasmedge --dir .:. -m ./crates/audio/audio-classification-ffmpeg/target/wasm32-wasi/release/object-detection.wasm \
           -m ./efficientdet_lite0_uint8.tflite -i data/img/cat_and_dog.jpg --max-results 2;"
