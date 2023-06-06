@@ -36,16 +36,15 @@ jobs:
       - name: Download FFMpeg dependencies
         run: ./scripts/download-ffmpeg-deps.sh
 
-      - name: Build FFMpeg application (audio-classification-ffmpeg)
+      - name: Build FFMpeg applications (audio-classification-ffmpeg and image-classification-ffmpeg)
+        env:
+          WASI_SYSROOT: "./ffmpeg-deps/wasi-sysroot"
+          FFMPEG_DIR: "./ffmpeg-deps/ffmpeg-lib"
+          CLANG_RT: "./ffmpeg-deps/clang-rt"
+          BINDGEN_EXTRA_CLANG_ARGS: "--sysroot=${WASI_SYSROOT} --target=wasm32-wasi -fvisibility=default"
         run: |
           bash -c "\
-          source ./scripts/ffmpeg-cargo-env.sh;\
-          cargo build --release --manifest-path=./crates/audio/audio-classification-ffmpeg/Cargo.toml;"
-
-      - name: Build FFMpeg application (image-classification-ffmpeg)
-        run: |
-          bash -c "\
-          source ./scripts/ffmpeg-cargo-env.sh;\
+          cargo build --release --manifest-path=./crates/audio/audio-classification-ffmpeg/Cargo.toml;\
           cargo build --release --manifest-path=./crates/vision/image-classification-ffmpeg/Cargo.toml;"
 
       - name: Build and install WasmEdge Wasi-NN with TensorflowLite backend
