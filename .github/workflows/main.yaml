@@ -67,9 +67,9 @@ jobs:
           curl -sLO https://storage.googleapis.com/mediapipe-tasks/image_classifier/efficientnet_lite0_fp32.tflite;\
           wasmedge --dir .:. ./target/wasm32-wasi/release/image-classification.wasm --help;\
           wasmedge --dir .:. ./target/wasm32-wasi/release/image-classification.wasm \
-          -m ./efficientnet_lite0_fp32.tflite -i ./data/data/img/bird.jpg; \
+          -m ./efficientnet_lite0_fp32.tflite -i ./data/img/bird.jpg --max-results 2;\
           wasmedge --dir .:. ./target/wasm32-wasi/release/image-classification.wasm \
-          -m ./efficientnet_lite0_fp32.tflite -i ./data/data/img/banana.jpg;"
+          -m ./efficientnet_lite0_fp32.tflite -i ./data/img/banana.jpg;"
 
       - name: Run application text-classification.wasm
         run: |
