@@ -1,0 +1,71 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+
+env:
+  WASMEDGE_PATH: ~/.wasmedge
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    container:
+      image: wasmedge/wasmedge:latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Stable Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Install Rust wasm32-wasi
+        run: rustup target add wasm32-wasi
+
+      - name: Build normal applications
+        run: cargo build --release
+
+      - name: Download FFMpeg dependencies
+        run: ./scripts/download-ffmpeg-deps.sh
+
+      - name: Build FFMpeg application (audio-classification-ffmpeg)
+        run: |
+          bash -c "\
+          source ./scripts/ffmpeg-cargo-env.sh;\
+          cargo build --release --manifest-path=./crates/audio/audio-classification-ffmpeg/Cargo.toml;"
+
+      - name: Build FFMpeg application (image-classification-ffmpeg)
+        run: |
+          bash -c "\
+          source ./scripts/ffmpeg-cargo-env.sh;\
+          cargo build --release --manifest-path=./crates/vision/image-classification-ffmpeg/Cargo.toml;"
+
+      - name: Build and install WasmEdge Wasi-NN with TensorflowLite backend
+        run: |
+          bash -c "\
+          git clone https://github.com/WasmEdge/WasmEdge;\
+          cd ./WasmEdge;\
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+          -DWASMEDGE_PLUGIN_WASI_NN_BACKEND=TensorflowLite -DCMAKE_INSTALL_PREFIX=${WASMEDGE_PATH} .;\
+          cmake --build build;\
+          cmake --install build;\
+          cp build/_deps/wasmedgetensorflowdepslite-src/libtensorflowlite_c.so ${WASMEDGE_PATH}/lib/;"
+
+      - name: Run application image-classification.wasm
+        env:
+          PATH: ${WASMEDGE_PATH}/bin:${PATH}
+          WASMEDGE_PLUGIN_PATH: ${WASMEDGE_PATH}/lib/wasmedge
+          LD_LIBRARY_PATH: ${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}
+        run: |
+          bash -c "\
+          curl -sLO https://storage.googleapis.com/mediapipe-tasks/image_classifier/efficientnet_lite0_fp32.tflite;\
+          wasmedge --dir .:. ./target/wasm32-wasi/release/image-classification.wasm \
+          -m ./efficientnet_lite0_fp32.tflite -i ./data/data/img/banana.jpg;"
