@@ -73,15 +73,15 @@ jobs:
 
       - name: Run application text-classification.wasm
         run: |
-          bash -c "\
+          bash -c '\
           export PATH=${WASMEDGE_PATH}/bin:${PATH}; \
           export WASMEDGE_PLUGIN_PATH=${WASMEDGE_PATH}/lib/wasmedge; \
           export LD_LIBRARY_PATH=${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}; \
           curl -sLO https://storage.googleapis.com/mediapipe-tasks/text_classifier/bert_text_classifier.tflite;\
           echo "I love coding so much!" | wasmedge --dir .:. ./target/wasm32-wasi/release/text-classification.wasm \
           -m ./bert_text_classifier.tflite;\
-          echo "I don't like raining." | wasmedge --dir .:. ./target/wasm32-wasi/release/text-classification.wasm \
-          -m ./bert_text_classifier.tflite;"
+          echo "I do not like raining." | wasmedge --dir .:. ./target/wasm32-wasi/release/text-classification.wasm \
+          -m ./bert_text_classifier.tflite;'
 
       - name: Run application gesture-recognition.wasm
         run: |
