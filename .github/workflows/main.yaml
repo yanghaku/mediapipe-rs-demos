@@ -39,10 +39,10 @@ jobs:
       - name: Build FFMpeg applications (audio-classification-ffmpeg and image-classification-ffmpeg)
         run: |
           bash -c '\
-          export WASI_SYSROOT="$(pwd)/ffmpeg-deps/wasi-sysroot" \
-          export FFMPEG_DIR="$(pwd)/ffmpeg-deps/ffmpeg-lib" \
-          export CLANG_RT="$(pwd)/ffmpeg-deps/clang-rt" \
-          export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=${WASI_SYSROOT} --target=wasm32-wasi -fvisibility=default" \
+          export WASI_SYSROOT="$(pwd)/ffmpeg-deps/wasi-sysroot"; \
+          export FFMPEG_DIR="$(pwd)/ffmpeg-deps/ffmpeg-lib"; \
+          export CLANG_RT="$(pwd)/ffmpeg-deps/clang-rt"; \
+          export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=${WASI_SYSROOT} --target=wasm32-wasi -fvisibility=default"; \
           env; \
           cargo build --release --manifest-path=./crates/audio/audio-classification-ffmpeg/Cargo.toml;\
           cargo build --release --manifest-path=./crates/vision/image-classification-ffmpeg/Cargo.toml;'
