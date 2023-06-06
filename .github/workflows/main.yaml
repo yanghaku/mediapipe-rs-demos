@@ -30,8 +30,8 @@ jobs:
       - name: Install Rust wasm32-wasi
         run: rustup target add wasm32-wasi
 
-      - name: Build normal applications
-        run: cargo build --release
+      #      - name: Build normal applications
+      #        run: cargo build --release
 
       - name: Download FFMpeg dependencies
         run: ./scripts/download-ffmpeg-deps.sh
@@ -43,6 +43,7 @@ jobs:
           export FFMPEG_DIR="$(pwd)/ffmpeg-deps/ffmpeg-lib" \
           export CLANG_RT="$(pwd)/ffmpeg-deps/clang-rt" \
           export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=${WASI_SYSROOT} --target=wasm32-wasi -fvisibility=default" \
+          env; \
           cargo build --release --manifest-path=./crates/audio/audio-classification-ffmpeg/Cargo.toml;\
           cargo build --release --manifest-path=./crates/vision/image-classification-ffmpeg/Cargo.toml;'
 
@@ -109,3 +110,14 @@ jobs:
           curl -sLO https://storage.googleapis.com/mediapipe-tasks/audio_classifier/yamnet_audio_classifier_with_metadata.tflite;\
           wasmedge --dir .:. -m ./crates/audio/audio-classification-ffmpeg/target/wasm32-wasi/release/audio-classification-ffmpeg.wasm \
           -m ./yamnet_audio_classifier_with_metadata.tflite -i data/audio/speech_16000_hz_mono.wav;"
+
+      - name: Run application object-detection.wasm
+        env:
+          PATH: ${WASMEDGE_PATH}/bin:${PATH}
+          WASMEDGE_PLUGIN_PATH: ${WASMEDGE_PATH}/lib/wasmedge
+          LD_LIBRARY_PATH: ${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}
+        run: |
+          bash -c "\
+          curl -sLO https://storage.googleapis.com/mediapipe-tasks/object_detector/efficientdet_lite0_uint8.tflite;\
+          wasmedge --dir .:. -m ./crates/audio/audio-classification-ffmpeg/target/wasm32-wasi/release/object-detection.wasm \
+          -m ./efficientdet_lite0_uint8.tflite -i data/img/cat_and_dog.jpg --max-results 2;"
