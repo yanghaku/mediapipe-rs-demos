@@ -37,15 +37,14 @@ jobs:
         run: ./scripts/download-ffmpeg-deps.sh
 
       - name: Build FFMpeg applications (audio-classification-ffmpeg and image-classification-ffmpeg)
-        env:
-          WASI_SYSROOT: "./ffmpeg-deps/wasi-sysroot"
-          FFMPEG_DIR: "./ffmpeg-deps/ffmpeg-lib"
-          CLANG_RT: "./ffmpeg-deps/clang-rt"
-          BINDGEN_EXTRA_CLANG_ARGS: "--sysroot=./ffmpeg-deps/wasi-sysroot --target=wasm32-wasi -fvisibility=default"
         run: |
-          bash -c "\
+          bash -c '\
+          export WASI_SYSROOT="$(pwd)/ffmpeg-deps/wasi-sysroot" \
+          export FFMPEG_DIR="$(pwd)/ffmpeg-deps/ffmpeg-lib" \
+          export CLANG_RT="$(pwd)/ffmpeg-deps/clang-rt" \
+          export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=${WASI_SYSROOT} --target=wasm32-wasi -fvisibility=default" \
           cargo build --release --manifest-path=./crates/audio/audio-classification-ffmpeg/Cargo.toml;\
-          cargo build --release --manifest-path=./crates/vision/image-classification-ffmpeg/Cargo.toml;"
+          cargo build --release --manifest-path=./crates/vision/image-classification-ffmpeg/Cargo.toml;'
 
       - name: Build and install WasmEdge Wasi-NN with TensorflowLite backend
         run: |
@@ -66,6 +65,9 @@ jobs:
         run: |
           bash -c "\
           curl -sLO https://storage.googleapis.com/mediapipe-tasks/image_classifier/efficientnet_lite0_fp32.tflite;\
+          wasmedge --dir .:. ./target/wasm32-wasi/release/image-classification.wasm --help;\
+          wasmedge --dir .:. ./target/wasm32-wasi/release/image-classification.wasm \
+          -m ./efficientnet_lite0_fp32.tflite -i ./data/data/img/bird.jpg; \
           wasmedge --dir .:. ./target/wasm32-wasi/release/image-classification.wasm \
           -m ./efficientnet_lite0_fp32.tflite -i ./data/data/img/banana.jpg;"
 
@@ -81,3 +83,29 @@ jobs:
           -m ./bert_text_classifier.tflite;\
           echo "I don't like raining." | wasmedge --dir .:. ./target/wasm32-wasi/release/text-classification.wasm \
           -m ./bert_text_classifier.tflite;"
+
+      - name: Run application gesture-recognition.wasm
+        env:
+          PATH: ${WASMEDGE_PATH}/bin:${PATH}
+          WASMEDGE_PLUGIN_PATH: ${WASMEDGE_PATH}/lib/wasmedge
+          LD_LIBRARY_PATH: ${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}
+        run: |
+          bash -c "\
+          curl -sLO https://storage.googleapis.com/mediapipe-tasks/gesture_recognizer/gesture_recognizer.task;\
+          wasmedge --dir .:. ./target/wasm32-wasi/release/gesture-recognition.wasm \
+          -m ./gesture_recognizer.task -i data/img/gesture_recognition_google_samples/pointing_up.jpg;\
+          wasmedge --dir .:. ./target/wasm32-wasi/release/gesture-recognition.wasm \
+          -m ./gesture_recognizer.task -i data/img/gesture_recognition_google_samples/thumbs_up.jpg;\
+          wasmedge --dir .:. ./target/wasm32-wasi/release/gesture-recognition.wasm \
+          -m ./gesture_recognizer.task -i data/img/gesture_recognition_google_samples/victory.jpg;"
+
+      - name: Run application audio-classification-ffmpeg.wasm
+        env:
+          PATH: ${WASMEDGE_PATH}/bin:${PATH}
+          WASMEDGE_PLUGIN_PATH: ${WASMEDGE_PATH}/lib/wasmedge
+          LD_LIBRARY_PATH: ${WASMEDGE_PATH}/lib:${LD_LIBRARY_PATH}
+        run: |
+          bash -c "\
+          curl -sLO https://storage.googleapis.com/mediapipe-tasks/audio_classifier/yamnet_audio_classifier_with_metadata.tflite;\
+          wasmedge --dir .:. -m ./crates/audio/audio-classification-ffmpeg/target/wasm32-wasi/release/audio-classification-ffmpeg.wasm \
+          -m ./yamnet_audio_classifier_with_metadata.tflite -i data/audio/speech_16000_hz_mono.wav;"
