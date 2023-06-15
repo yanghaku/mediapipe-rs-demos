@@ -40,13 +40,12 @@ fn main() {
     let img = image::open(args.input_image).unwrap();
 
     let gesture_recognition_results = GestureRecognizerBuilder::new()
-        .model_asset_path(args.model) // set model path
         .max_results(args.max_results) // set max result
         .score_threshold(args.score_threshold) // set score threshold
         .num_hands(args.num_hands) // set recognition number of hands
         .min_hand_detection_confidence(args.min_hand_detection_confidence)
         .min_hand_presence_confidence(args.min_hand_presence_confidence)
-        .finalize()
+        .build_from_file(args.model)
         .unwrap() // create a task instance
         .recognize(&img)
         .unwrap(); // do inference and generate results

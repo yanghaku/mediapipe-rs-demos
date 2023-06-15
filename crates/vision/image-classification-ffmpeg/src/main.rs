@@ -32,10 +32,9 @@ fn main() {
         FFMpegVideoData::new(ffmpeg_next::format::input(&args.input_video).unwrap()).unwrap();
 
     let classification_results = ImageClassifierBuilder::new()
-        .model_asset_path(args.model) // set model path
         .max_results(args.max_results) // set max result
         .score_threshold(args.score_threshold) // set score threshold
-        .finalize()
+        .build_from_file(args.model)
         .unwrap() // create a image classifier
         .classify_for_video(input)
         .unwrap(); // do inference and generate results

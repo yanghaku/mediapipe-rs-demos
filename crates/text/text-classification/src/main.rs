@@ -23,10 +23,9 @@ fn main() {
     let args = Args::parse();
 
     let text_classifier = TextClassifierBuilder::new()
-        .model_asset_path(args.model) // set model path
         .max_results(args.max_results) // set max result
         .score_threshold(args.score_threshold) // set score threshold
-        .finalize()
+        .build_from_file(args.model)
         .unwrap(); // create a text classifier
 
     // create a text classifier session

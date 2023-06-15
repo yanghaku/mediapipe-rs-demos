@@ -26,10 +26,9 @@ fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     let classification_result = ImageClassifierBuilder::new()
-        .model_asset_path(args.model) // set model path
         .max_results(args.max_results) // set max result
         .score_threshold(args.score_threshold) // set score threshold
-        .finalize()? // create a image classifier
+        .build_from_file(args.model)? // create a image classifier
         .classify(&image::open(args.input_image)?)?; // do inference and generate results
 
     // show formatted result message

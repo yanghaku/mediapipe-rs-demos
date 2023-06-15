@@ -47,10 +47,9 @@ fn main() {
     let audio = read_audio(args.input_audio);
 
     let classification_results = AudioClassifierBuilder::new()
-        .model_asset_path(args.model) // set model path
         .max_results(args.max_results) // set max result
         .score_threshold(args.score_threshold) // set score threshold
-        .finalize()
+        .build_from_file(args.model)
         .unwrap() // create a audio classifier
         .classify(audio)
         .unwrap(); // do inference and generate results

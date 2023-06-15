@@ -38,6 +38,7 @@ Use the [WasmEdge] with TfLite backend.
 
 references: [Build WasmEdge with WASI-NN TfLite backend]
 
+**Note: every demos are command line app, use `--help` to see how to set arguments.**
 
 # License
 

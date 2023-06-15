@@ -36,11 +36,10 @@ fn main() {
     // read input image
     let mut input_img = image::open(args.input_image).unwrap();
     let results = HandLandmarkerBuilder::new()
-        .model_asset_path(args.model)
         .num_hands(args.num_hands)
         .min_hand_detection_confidence(args.min_hand_detection_confidence)
         .min_hand_presence_confidence(args.min_hand_presence_confidence)
-        .finalize()
+        .build_from_file(args.model)
         .unwrap() // create a task instance
         .detect(&input_img)
         .unwrap(); // do inference and generate results

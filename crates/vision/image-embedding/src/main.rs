@@ -25,8 +25,7 @@ fn main() {
     let img_2 = image::open(args.image_2).unwrap();
 
     let task = ImageEmbedderBuilder::new()
-        .model_asset_path(args.model) // set model path
-        .finalize()
+        .build_from_file(args.model)
         .unwrap(); // create a task instance
 
     // create a new session to perform task

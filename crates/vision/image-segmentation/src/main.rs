@@ -31,10 +31,9 @@ fn main() {
     let img = image::open(args.input_image).unwrap();
 
     let task = ImageSegmenterBuilder::new()
-        .model_asset_path(args.model) // set model path
         .output_confidence_masks(false)
         .output_category_mask(true)
-        .finalize()
+        .build_from_file(args.model)
         .unwrap(); // create a task instance
 
     let labels = task.labels();

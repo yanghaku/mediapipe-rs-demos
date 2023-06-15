@@ -32,10 +32,9 @@ fn main() {
     // read input image
     let mut input_img = image::open(args.input_image).unwrap();
     let detection_result = ObjectDetectorBuilder::new()
-        .model_asset_path(args.model)
         .max_results(args.max_results)
         .score_threshold(args.score_threshold)
-        .finalize()
+        .build_from_file(args.model)
         .unwrap() // create a object detector
         .detect(&input_img)
         .unwrap(); // do inference and generate results

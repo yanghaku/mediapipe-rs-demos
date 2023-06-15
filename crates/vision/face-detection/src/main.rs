@@ -36,11 +36,10 @@ fn main() {
     // read input image
     let mut input_img = image::open(args.input_image).unwrap();
     let detection_result = FaceDetectorBuilder::new()
-        .model_asset_path(args.model)
         .num_faces(args.num_faces)
         .min_detection_confidence(args.min_detection_confidence)
         .min_suppression_threshold(args.min_suppression_threshold)
-        .finalize()
+        .build_from_file(args.model)
         .unwrap() // create a face detector
         .detect(&input_img)
         .unwrap(); // do inference and generate results
